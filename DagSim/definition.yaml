@@ -1,0 +1,11 @@
+graph:
+  python_file: functions.py
+  nodes:
+    parac: numpy.random.binomial(1, 0.5, size=100)
+    methyl_vals: get_methyl_values_based_on_parac(parac)
+    ADD: get_ADD_from_parac(methyl_vals)
+
+instructions:
+  simulation:
+    csv_name: PharmaSafe
+    num_samples: 10
