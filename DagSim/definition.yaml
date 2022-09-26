@@ -1,9 +1,12 @@
 graph:
   python_file: functions.py
   nodes:
-    parac: numpy.random.binomial(1, 0.5, size=100)
-    methyl_vals: get_methyl_values_based_on_parac(parac)
-    ADD: get_ADD_from_parac(methyl_vals)
+    parac: numpy.random.binomial(1, 0.5)
+    methyl_val: get_methyl_values_based_on_parac(parac)
+    ADD: get_ADD_from_methyl_val(methyl_val)
+    Stratify:
+      type: Stratify
+      function: split_based_on_ADD(ADD)
 
 instructions:
   simulation:

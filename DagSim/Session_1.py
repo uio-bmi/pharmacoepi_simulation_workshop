@@ -10,4 +10,10 @@ for mother_index in range(n_samples):
     if mothers[mother_index] == 1:
         methyl_vals[mother_index] = methyl_vals[mother_index] + 0.2
 
-ADD_values = np.random.binomial(n=1, p=methyl_vals)
+# ADD_values = np.random.binomial(n=1, p=methyl_vals)
+
+ADD_values = []
+# return np.random.binomial(n=1, p=methyl_vals)
+for methyl_val in methyl_vals:
+    ADD_i = np.random.binomial(n=1, p=methyl_val)
+    ADD_values.append(ADD_i)
