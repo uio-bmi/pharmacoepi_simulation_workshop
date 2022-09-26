@@ -11,7 +11,6 @@ options("scipen" = 10)
 gset <- getGEO("GSE145714", GSEMatrix = TRUE, getGPL=FALSE)
 gset <- gset$GSE145714_series_matrix.txt.gz
 ex <- exprs(gset)
-print(describe(ex))
 
 # Access metadata of the expression set to identify real groupings for patients, using characteristics from this can be a basis for better realism in simulations
 meta_data <- pData(gset)
@@ -52,52 +51,74 @@ plot(density(bimodal_samples), main = "Bimodal distribution")
 #import matplotlib.pyplot as plt
 #from statsmodels.stats import multitest
 
-#def assign_donor_groups(donors):
-#  donors_with_groups = []
-#for index in range(0,len(donors)):
-#  grouping_assigned = random.randint(0,1)
-#if grouping_assigned == 1:
-#  label = 1
-#new_groups = donors[index]
-#elif grouping_assigned == 0:
-#  label = 0
-#new_groups = donors[index]
-#donor = np.concatenate([np.array([label]), new_groups])
-#donors_with_groups.append(donor)
-#return donors_with_groups
+def assign_donor_groups(donors):
+    donors_with_groups = []
+    for index in range(0,len(donors)):
+        grouping_assigned = random.randint(0,1)
+        if grouping_assigned == 1:
+            label = 1
+            new_groups = donors[index]
+        elif grouping_assigned == 0:
+            label = 0
+            new_groups = donors[index]
+        donor = np.concatenate([np.array([label]), new_groups])
+        donors_with_groups.append(donor)
+    return donors_with_groups
+
+def assign_donor_groups_by_signal(donors):
+    donors_with_groups_by_signal = []
+
+    for index in range(0,len(donors)):
+        if donors[index][0] == 1:
+            label = 1
+            new_groups = donors[index]
+        elif donors[index][0] == 0:
+            label = 0
+            new_groups = donors[index]
+        donor = np.concatenate([np.array([label]), new_groups])
+        donors_with_groups_by_signal.append(donor)
+    return donors_with_groups_by_signal
 
 # Randomly assigning donors to groups
-#donors_with_groups = assign_donor_groups(donors)
+donors_with_groups = assign_donor_groups(donors)
+donors_with_groups_df = pd.DataFrame(donors_with_groups)
+#donors_with_groups = assign_donor_groups_by_signal(donors)
 #donors_with_groups_df = pd.DataFrame(donors_with_groups)
 
 # splitting donors into groups
-#group1 = donors_with_groups_df.loc[donors_with_groups_df[1]==1.0]
-#group2 = donors_with_groups_df.loc[donors_with_groups_df[1]==0.0]
+group1 = donors_with_groups_df.loc[donors_with_groups_df[1]==1.0]
+group2 = donors_with_groups_df.loc[donors_with_groups_df[1]==0.0]
 
-#def test_donor_group_difference(group1, group2):
-#  t_test_statistic, t_test_pvalue = ttest_ind(group1,group2, equal_var=True)
-#return t_test_pvalue
+def test_donor_group_difference(group1, group2):
+    t_test_statistic, t_test_pvalue = ttest_ind(group1,group2, equal_var=True)
+    return t_test_pvalue
 
-#t_tests = test_donor_group_difference(group1,group2)
+t_test = test_donor_group_difference(group1,group2)
 
-#def p_adjust_fdr(t_test_output):
-#  rejected_bool, pvalue_corrected = multitest.fdrcorrection(pvals=t_test_output)
-#return pd.DataFrame(pvalue_corrected)
+def p_adjust_fdr(t_test_output):
+    rejected_bool, pvalue_corrected = multitest.fdrcorrection(pvals=t_test_output)
+    return pd.DataFrame(pvalue_corrected)
 
 #def repeat_generation_analysis(n_reps):
-#  for i in range(0, n_reps):
-#  simulated_donors = simulate_donors(donor_count=60, size=size)
-#donors = make_donors_with_signal(simulated_donors, signal, 0.5)
-#donors_with_groups = assign_donor_groups(donors)
-#donors_with_groups_df = pd.DataFrame(donors_with_groups)
-#group1 = donors_with_groups_df.loc[donors_with_groups_df[1] == 1.0]
-#group2 = donors_with_groups_df.loc[donors_with_groups_df[1] == 0.0]
-#t_tests = test_donor_group_difference(group1, group2)
-#adjusted_t_tests = p_adjust_fdr(t_tests)
-#data = sns.distplot(adjusted_t_tests)
-#plt.title('Histogram of p-values')
-#plt.xlabel('P-values')
-#plt.ylabel('Frequency')
-#plt.show()
+#    signal_strengths = [0.05,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9]
+#    p_value_sig_count = 0
+#    for i in range(0, n_reps):
+#        simulated_donors = simulate_donors(donor_count=60, size=size)
+#        donors = make_donors_with_signal(simulated_donors, signal, signal_strengths[i])
+#        donors_with_groups = assign_donor_groups_by_signal(donors)
+#        donors_with_groups_df = pd.DataFrame(donors_with_groups)
+#        group1 = donors_with_groups_df.loc[donors_with_groups_df[1] == 1.0]
+#        group2 = donors_with_groups_df.loc[donors_with_groups_df[1] == 0.0]
+#        t_test = test_donor_group_difference(group1, group2)
+#        adjusted_t_tests = p_adjust_fdr(t_test)
+#        for val in adjusted_t_tests.values:
+#            if(val < 0.05):
+#                p_value_sig_count += 1
+#        data = sns.distplot(adjusted_t_tests)
+#        plt.title('Histogram of p-values')
+#        plt.xlabel('P-values')
+#        plt.ylabel('Frequency')
+#        plt.show()
+#        print("Times sign p found: ",p_value_sig_count)
 
 #repeat_generation_analysis(10)
